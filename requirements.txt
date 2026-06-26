@@ -1,0 +1,7 @@
+streamlit==1.58.0
+streamlit-webrtc==0.72.2
+deepface==0.0.93
+opencv-python-headless==4.9.0.80
+tf-keras==2.16.0
+av==16.1.0
+numpy==1.26.4
