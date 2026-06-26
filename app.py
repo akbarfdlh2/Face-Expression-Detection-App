@@ -4,9 +4,49 @@ from streamlit_webrtc import RTCConfiguration, WebRtcMode, webrtc_streamer
 from processor import EMOTION_EMOJI, FaceExpressionProcessor
 
 
-RTC_CONFIG = RTCConfiguration(
-    {"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-)
+def _ice_servers():
+    """Build the ICE server list.
+
+    STUN alone fails to connect on many networks behind NAT/firewalls
+    (common on Streamlit Cloud), so a TURN relay is needed. Provide your
+    own TURN credentials via `.streamlit/secrets.toml`:
+
+        [turn]
+        urls = ["turn:your.turn.server:3478"]
+        username = "user"
+        credential = "pass"
+
+    If no secret is set, a best-effort public TURN server is used as a
+    fallback (it may be rate-limited or unreliable).
+    """
+    servers = [
+        {"urls": ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}
+    ]
+    try:
+        turn = st.secrets["turn"]
+        servers.append(
+            {
+                "urls": list(turn["urls"]),
+                "username": turn["username"],
+                "credential": turn["credential"],
+            }
+        )
+    except Exception:
+        servers.append(
+            {
+                "urls": [
+                    "turn:openrelay.metered.ca:80",
+                    "turn:openrelay.metered.ca:443",
+                    "turn:openrelay.metered.ca:443?transport=tcp",
+                ],
+                "username": "openrelayproject",
+                "credential": "openrelayproject",
+            }
+        )
+    return servers
+
+
+RTC_CONFIG = RTCConfiguration({"iceServers": _ice_servers()})
 
 
 st.set_page_config(
