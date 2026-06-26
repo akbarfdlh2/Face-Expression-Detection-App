@@ -1,68 +1,70 @@
 # Face Expression Detection App
 
-Real-time face expression detection app built with Python, Streamlit, streamlit-webrtc, OpenCV, and DeepFace.
+Real-time facial expression detection in the browser, built with Streamlit, streamlit-webrtc, OpenCV, and DeepFace.
 
-The dependency pins in `requirements.txt` are compatible with Python 3.12.
+**🔗 Live demo:** https://face-expression-detection-app-createdbyakbarfdlh.streamlit.app/
 
 ## Features
 
-- Detects facial expressions from the browser webcam.
-- Uses WebRTC, so it works better for browser and Streamlit Cloud deployments than `cv2.VideoCapture`.
-- Draws face boxes and expression labels on the live video stream.
-- Supports common DeepFace emotion labels: happy, sad, angry, fear, surprise, disgust, and neutral.
+- Detects facial expressions live from your webcam.
+- Browser-based via WebRTC — works on Streamlit Cloud where `cv2.VideoCapture` does not.
+- Draws colored, per-emotion boxes and labels on the video stream.
+- Recognizes 7 emotions: happy, sad, angry, fear, surprise, disgust, and neutral.
+- Optimized for smoothness: analysis runs every few frames on a downscaled image, with results cached in between.
+
+## Tech Stack
+
+| Layer      | Tool                              |
+| ---------- | --------------------------------- |
+| UI         | Streamlit                         |
+| Streaming  | streamlit-webrtc (WebRTC)         |
+| Detection  | DeepFace + TensorFlow (tf-keras)  |
+| Imaging    | OpenCV (headless)                 |
+
+> Dependency pins in `requirements.txt` target Python 3.12.
 
 ## Project Structure
 
 ```text
 .
-├── app.py
-├── processor.py
-├── requirements.txt
-├── packages.txt
+├── app.py            # Streamlit UI
+├── processor.py      # WebRTC video frame processor (DeepFace inference + overlay)
+├── requirements.txt  # Python dependencies
+├── packages.txt      # System packages for Streamlit Cloud
 └── README.md
 ```
 
 ## Run Locally
 
-Create and activate a virtual environment:
-
 ```bash
+# 1. Create and activate a virtual environment
 python3 -m venv venv
-source venv/bin/activate
-```
+source venv/bin/activate          # Windows: venv\Scripts\activate
 
-On Windows, activate it with:
-
-```bat
-venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
+# 2. Install dependencies
 python3 -m pip install -r requirements.txt
-```
 
-Run the app:
-
-```bash
+# 3. Launch
 streamlit run app.py
 ```
 
-The first run can take longer because DeepFace downloads model weights.
+The first run is slower because DeepFace downloads its model weights once.
 
-## Deploy To Streamlit Cloud
+## Deploy to Streamlit Cloud
 
-1. Push this project to GitHub.
-2. Open `https://streamlit.app`.
-3. Create a new app from the repository.
-4. Set the main file path to `app.py`.
-5. Deploy.
+1. Push the project to GitHub.
+2. Go to [share.streamlit.io](https://share.streamlit.io) and create a new app from the repo.
+3. Set **Main file path** to `app.py`.
+4. Click **Deploy**.
 
-Streamlit Cloud will read `requirements.txt` for Python dependencies and `packages.txt` for system packages.
+Streamlit Cloud reads `requirements.txt` for Python packages and `packages.txt` for system libraries automatically.
 
 ## Notes
 
-- Keep `opencv-python-headless` for cloud deployment.
+- Keep `opencv-python-headless` (not `opencv-python`) for cloud deployments.
 - Webcam access requires browser permission.
-- If the first detection feels slow, wait for the DeepFace model load to finish.
+- Processing happens in your session — video is not stored.
+
+## Credits
+
+Created by [Akbar Fadilah](https://muhamadakbarfadilah.my.id/) · Founder & Co-Founder at [Afda Technology Solutions](https://afdatech.com/)
